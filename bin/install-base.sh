@@ -72,11 +72,15 @@ base() {
 		less \
 		libc6-dev \
 		libltdl-dev \
+		libtinfo5 \
+		libtinfo-dev \
+		libncurses5 \
 		libncurses5-dev \
 		locales \
 		lsof \
 		make \
 		mount \
+		ncurses-bin \
 		net-tools \
 		nfs-common \
 		p7zip \
