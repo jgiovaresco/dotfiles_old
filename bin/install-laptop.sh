@@ -146,13 +146,12 @@ clean() {
 print_manual_steps() {
 	echo "To complete setup, run following commands as $USERNAME :"
 	echo " ./install-laptop.sh end"
-	echo " vim +BundleInstall +qall"
 }
 
 end_installation() {
-	
+
 	systemctl --user daemon-reload
-	systemctl daemon-reload
+	sudo systemctl daemon-reload
 
 	# enable dbus for the user session
 	systemctl --user enable dbus.socket
@@ -160,6 +159,8 @@ end_installation() {
 	sudo systemctl enable i3lock
 	sudo systemctl enable suspend-sedation.service
 
+	vim +BundleInstall +qall
+	
 }
 
 usage() {
@@ -172,7 +173,7 @@ usage() {
 	echo "  wm                    		- install window manager / configure desktop"
 	echo "  audio                  		- install / configure sound"
 	echo "  main-user              		- configure main user"
-	echo "  motd                		- configure main user"
+	echo "  end                			- Finish setup"
 }
 
 main() {
@@ -226,6 +227,7 @@ main() {
 		intsall_audio
 		clean
 	elif [[ $cmd == "main-user" ]]; then
+		check_is_sudo
 		configure_main_user
 		clean
 	elif [[ $cmd == "end" ]]; then

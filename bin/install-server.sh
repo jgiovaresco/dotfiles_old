@@ -24,7 +24,6 @@ packages_server() {
 
 	apt-get install -y \
 		cups \
-		figlet \
 		nfs-kernel-server \
 		samba \
 		sane \

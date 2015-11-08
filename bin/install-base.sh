@@ -59,6 +59,7 @@ base() {
 		cgroupfs-mount \
 		coreutils \
 		curl \
+		figlet \
 		file \
 		findutils \
 		git \
