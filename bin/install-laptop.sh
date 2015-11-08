@@ -78,6 +78,7 @@ configure_main_user() {
 	# fetch dotfiles from repo
 	git clone -b server https://github.com/jgiovaresco/dotfiles.git dotfiles
 	
+	cd "/home/$USERNAME/dotfiles"
 	# installs all the things
 	make
 
