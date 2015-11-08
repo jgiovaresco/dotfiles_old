@@ -11,6 +11,12 @@ check_is_sudo() {
 	fi
 }
 
+base_setup() {
+
+	/bin/bash -c "$(wget https://raw.githubusercontent.com/jgiovaresco/dotfiles/server/bin/install-base.sh --no-cache -O -) base jessie"
+
+}
+
 # installs packages for a server
 packages_server() {
 	apt-get update
@@ -103,6 +109,8 @@ main() {
 
 	if [[ $cmd == "all" ]]; then
 		check_is_sudo
+		echo "----> Base setup"
+		base_setup
 		echo "----> Install server packages"
 		packages_server
 		echo "----> Configure main user"
