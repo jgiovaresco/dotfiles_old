@@ -13,7 +13,7 @@ check_is_sudo() {
 
 base_setup() {
 
-	/bin/bash -c "$(wget https://raw.githubusercontent.com/jgiovaresco/dotfiles/laptop/bin/install-base.sh --no-cache -O -) base jessie"
+	/bin/bash -c "$(wget https://raw.githubusercontent.com/jgiovaresco/dotfiles/laptop/bin/install-base.sh --no-cache -O -) base stretch"
 
 }
 
