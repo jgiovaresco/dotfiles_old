@@ -83,13 +83,7 @@ configure_main_user() {
 
 	# installs etc files
 	cd "/home/$USERNAME/dotfiles" && make etc
-
-	# enable dbus for the user session
-	su -c "systemctl --user enable dbus.socket" -m - $USERNAME
 	
-	sudo systemctl enable i3lock
-	sudo systemctl enable suspend-sedation.service
-
 	cd "/home/$USERNAME"
 
 	# install .vim files
@@ -149,12 +143,23 @@ clean() {
 
 }
 
-
 print_manual_steps() {
-	echo "To complete setup, run following commands :"
-	echo " su -c "systemctl --user daemon-reload" - $USERNAME"
-	echo " systemctl daemon-reload"
-	echo " su -c "vim +BundleInstall +qall" - $USERNAME"
+	echo "To complete setup, run following commands as $USERNAME :"
+	echo " ./install-laptop.sh end"
+	echo " vim +BundleInstall +qall"
+}
+
+end_installation() {
+	
+	systemctl --user daemon-reload
+	systemctl daemon-reload
+
+	# enable dbus for the user session
+	systemctl --user enable dbus.socket
+	
+	sudo systemctl enable i3lock
+	sudo systemctl enable suspend-sedation.service
+
 }
 
 usage() {
@@ -222,6 +227,9 @@ main() {
 		clean
 	elif [[ $cmd == "main-user" ]]; then
 		configure_main_user
+		clean
+	elif [[ $cmd == "end" ]]; then
+		end_installation
 		clean
 	else
 		usage
