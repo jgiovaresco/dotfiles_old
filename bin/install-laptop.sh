@@ -101,12 +101,6 @@ configure_main_user() {
 	)
 }
 
-configure_motd() {
-	sudo chmod +x /etc/update-motd.d/*
-	sudo rm /etc/motd
-	sudo ln -s /var/run/motd /etc/motd
-}
-
 install_network_driver() {
 
 	apt-get install -y firmware-iwlwifi firmware-realtek --no-install-recommends
@@ -194,8 +188,6 @@ main() {
 		setup_sudo
 		echo "----> Configure main user"
 		configure_main_user
-		echo "----> Configure motd"
-		configure_motd
 		echo "----> Configure network"
 		install_network_driver
 		echo "----> Configure graphics"

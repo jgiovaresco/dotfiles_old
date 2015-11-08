@@ -188,6 +188,8 @@ main() {
 		base
 		echo "----> Configure ZSH for root"
 		configure_zsh_for_root
+		echo "----> Configure motd"
+		configure_motd
 		echo "----> Install base application"
 		install_base_application
 	elif [[ $cmd == "sources" ]]; then
