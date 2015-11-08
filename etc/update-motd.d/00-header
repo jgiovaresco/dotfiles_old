@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+#    00-header - create the header of the MOTD
+#
+
+DISTRIB_DESCRIPTION=$(lsb_release -s -d)
+
+figlet $(hostname)
+printf "\n"
+
+printf "Welcome to %s (%s).\n" "$DISTRIB_DESCRIPTION" "$(uname -r)"
+printf "\n"

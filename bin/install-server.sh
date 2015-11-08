@@ -87,6 +87,12 @@ configure_main_user() {
 	)
 }
 
+configure_motd() {
+	chmod +x /etc/update-motd.d/*
+	rm /etc/motd
+	ln -s /var/run/motd /etc/motd
+}
+
 main() {
 	local cmd=$1
 
@@ -111,6 +117,8 @@ main() {
 	elif [[ $cmd == "main-user" ]]; then
 		check_is_sudo
 		configure_main_user
+	elif [[ $cmd == "motd" ]]; then
+		configure_motd
 	else
 		usage
 	fi

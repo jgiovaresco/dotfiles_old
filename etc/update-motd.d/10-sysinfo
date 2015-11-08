@@ -1,0 +1,35 @@
+#!/bin/bash
+#
+#    10-sysinfo - generate the system information
+#
+
+date=`date`
+# System load
+load=`cat /proc/loadavg | awk '{print $1}'`
+# partitions usage
+root_usage=`df -h / | awk '/\// {print $(NF-1)}'`
+downloads_usage=`df -h /var/downloads | awk '/\// {print $(NF-1)}'`
+docker_usage=`df -h /var/lib/docker | awk '/\// {print $(NF-1)}'`
+# Memory usage
+memory_usage=`free -m | awk '/Mem:/ { total=$2 } /buffers\/cache/ { used=$3 } END { printf("%3.1f%%", used/total*100)}'`
+# Swap usage
+swap_usage=`free -m | awk '/Swap/ { printf("%3.1f%%", "exit !$2;$3/$2*100") }'`
+# Connecterd users
+users=`users | wc -w`
+# Up time
+time=`uptime | grep -ohe 'up .*' | sed 's/,/\ hours/g' | awk '{ printf $2" "$3 }'`
+# Running processes
+processes=`ps aux | wc -l`
+# IP adress
+ip=`ifconfig $(route | grep default | awk '{ print $8 }') | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}'`
+
+echo "System information as of: $date"
+echo
+printf "System uptime:\t%s\t\n" "$time"
+printf "System load:\t%s\tIP Address:\t%s\n" $load $ip
+printf "Memory usage:\t%s\tSwap usage:\t%s\n" $memory_usage swap_usage
+printf "Local Users:\t%s\tProcesses:\t%s\n" $users $processes
+printf "Usage on /:\t\t\t%s\t\n" $root_usage
+printf "Usage on /var/downloads:\t%s\t\n" $downloads_usage
+printf "Usage on /var/lib/docker:\t%s\t\n" $docker_usage
+echo
