@@ -1,0 +1,18 @@
+[Unit]
+Description=dnsdock container
+Documentation=https://github.com/tonistiigi/dnsdock
+After=docker.service
+Requires=docker.service
+
+[Service]
+# Turn off timeouts 
+TimeoutStartSec=0
+# Enable automatic restart when container stops
+Restart=always 
+# Start dnsdock container when service starts
+ExecStart=/usr/bin/systemd-docker run --rm -v /var/run/docker.sock:/var/run/docker.sock --name %n -p 172.17.42.1:53:53/udp tonistiigi/dnsdock 
+Type=notify
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target
