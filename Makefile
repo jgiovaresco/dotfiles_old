@@ -16,5 +16,3 @@ etc:
 		f=$$(echo $$file | sed -e 's|$(CURDIR)||'); \
 		sudo cp $$file $$f; \
 	done
-	systemctl --user daemon-reload
-	sudo systemctl daemon-reload
