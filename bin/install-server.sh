@@ -111,6 +111,26 @@ print_manual_steps() {
 	echo " su -c "vim +BundleInstall +qall" - $USERNAME"
 }
 
+install_applications() {
+
+	# Deluge
+	mkdir -p /var/downloads/deluge/deluged-config
+	mkdir -p /var/downloads/deluge/deluge-web-config
+	mkdir -p /var/downloads/deluge/downloads/complete
+	mkdir -p /var/downloads/deluge/downloads/incoming
+	mkdir -p /var/downloads/deluge/downloads/queue
+	mkdir -p /var/downloads/deluge/downloads/torrents
+	chown root.downloads -R /var/downloads/deluge
+	chmod 775 -R /var/downloads/deluge
+	# Enable service
+	systemctl enable /etc/systemd/system/deluged.service
+	systemctl enable /etc/systemd/system/deluge-web.service
+	# Start service (control progression with 'journalctl -f')
+	systemctl start deluged.service
+	systemctl start deluge-web.service
+	
+}
+
 main() {
 	local cmd=$1
 
@@ -143,6 +163,8 @@ main() {
 		configure_motd
 	elif [[ $cmd == "docker" ]]; then
 		install_docker
+	elif [[ $cmd == "appli" ]]; then
+		install_applications
 	else
 		usage
 	fi

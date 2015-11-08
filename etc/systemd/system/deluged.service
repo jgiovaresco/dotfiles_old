@@ -1,0 +1,21 @@
+[Unit]
+Description=deluged container
+Documentation=https://github.com/jgiovaresco/docker-deluged
+After=docker.service
+Requires=docker.service
+
+[Service]
+# Turn off timeouts 
+TimeoutStartSec=0
+# Enable automatic restart when container stops
+Restart=always 
+# Start deluged container when service starts
+ExecStart=/usr/bin/systemd-docker run --rm --name %n \
+	-p 58846:58846 -v /var/downloads/deluge/deluged-config:/config \
+	-v /var/downloads/deluge/downloads:/downloads \
+	-e ADMIN_NAME=admin -e ADMIN_PASSWORD=admin jgiovaresco/deluged
+Type=notify
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target
