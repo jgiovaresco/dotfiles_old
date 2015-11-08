@@ -2,7 +2,7 @@
 
 default: install
 
-install: dotfiles etc
+install: dotfiles
 
 dotfiles:
 	# add aliases for dotfiles
@@ -13,8 +13,9 @@ dotfiles:
 
 etc:
 	for file in $(shell find $(CURDIR)/etc -type f -not -name ".*.swp"); do \
+		DIR=$$(dirname $$file); \
+		DIR=$$(echo $$DIR | sed -e 's|$(CURDIR)||'); \
+		mkdir -p $$DIR; \
 		f=$$(echo $$file | sed -e 's|$(CURDIR)||'); \
-		sudo cp $$file $$f; \
+		cp $$file $$f; \
 	done
-	systemctl --user daemon-reload
-	sudo systemctl daemon-reload

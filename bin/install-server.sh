@@ -70,28 +70,31 @@ configure_main_user() {
 	(
 	cd "/home/$USERNAME"
 
-	# install oh-my-zsh
-	su -c "git clone https://github.com/robbyrussell/oh-my-zsh.git .oh-my-zsh" -m $USERNAME
+	#
+	gpasswd -a $USERNAME downloads
+	gpasswd -a $USERNAME multimedia
+	gpasswd -a $USERNAME ebooks
+	gpasswd -a $USERNAME photos
+
+	# fetch oh-my-zsh
+	su -c "git clone https://github.com/robbyrussell/oh-my-zsh.git .oh-my-zsh" -m - $USERNAME
 	chsh $USERNAME -s /bin/zsh
 
-	# install dotfiles from repo
-	su -c "git clone https://github.com/jgiovaresco/dotfiles.git dotfiles" -m $USERNAME
-	cd "/home/$USERNAME/dotfiles"
+	# fetch dotfiles from repo
+	su -c "git clone -b server https://github.com/jgiovaresco/dotfiles.git dotfiles" -m - $USERNAME
+	
+	# installs dotfiles
+	su -c "HOME=/home/$USERNAME && cd ~/dotfiles && make" -m - $USERNAME
 
-	# installs all the things
-	su -c "make"
-
-	cd "/home/$USERNAME"
+	# installs etc files
+	cd "/home/$USERNAME/dotfiles" && make etc
 
 	# install .vim files
-	su -c "git clone https://github.com/jgiovaresco/.vim.git .vim" -m $USERNAME
-	su -c "git clone https://github.com/gmarik/vundle.git .vim/bundle/vundle" -m $USERNAME
-	su -c "ln -s /home/$USERNAME/.vim/.vimrc /home/$USERNAME/.vimrc" -m $USERNAME
+	su -c "git clone https://github.com/jgiovaresco/.vim.git .vim" -m - $USERNAME
+	su -c "git clone https://github.com/gmarik/vundle.git .vim/bundle/vundle" -m - $USERNAME
+	su -c "ln -s /home/$USERNAME/.vim/.vimrc /home/$USERNAME/.vimrc" -m - $USERNAME
 	ln -s "/home/$USERNAME/.vim" /root/.vim
 	ln -s "/home/$USERNAME/.vimrc" /root/.vimrc
-	
-	echo "To install VIM plugins (ignore potential error messages at the first start)"
-	echo "run vim +BundleInstall +qall"
 	)
 }
 
@@ -99,6 +102,13 @@ configure_motd() {
 	chmod +x /etc/update-motd.d/*
 	rm /etc/motd
 	ln -s /var/run/motd /etc/motd
+}
+
+print_manual_steps() {
+	echo "To complete setup, run following commands :"
+	echo " su -c "systemctl --user daemon-reload" - $USERNAME"
+	echo " systemctl daemon-reload"
+	echo " su -c "vim +BundleInstall +qall" - $USERNAME"
 }
 
 main() {
@@ -119,6 +129,8 @@ main() {
 		configure_main_user
 		echo "----> Configure motd"
 		configure_motd
+		echo "----> End of setup"
+		print_manual_steps
 		clean
 	elif [[ $cmd == "install-packages" ]]; then
 		check_is_sudo
