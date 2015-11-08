@@ -133,6 +133,7 @@ install_base_application() {
 	make && make install
 
 	# Docker
+	install_docker
 }
 
 # installs docker master
