@@ -1,0 +1,8 @@
+# Jenv path
+export JENV_PATH=$HOME/.jenv/bin
+
+# RVM path
+export RVM_PATH=$HOME/.rvm/bin
+
+# update path
+export PATH=/usr/local/bin:/:$PATH:$JENV_PATH:$RVM_PATH:/sbin
