@@ -11,166 +11,36 @@ check_is_sudo() {
 	fi
 }
 
-# sets up apt sources
-setup_sources() {
-	local dist=$1
+base_setup() {
 
-	if [[ -z "$dist" ]]; then
-		echo "You need to specify a distribution"
-		exit 1
-	fi
+	/bin/bash -c "$(wget https://raw.githubusercontent.com/jgiovaresco/dotfiles/laptop/bin/install-base.sh --no-cache -O -) base jessie"
 
-
-	apt-get install -y apt-transport-https
-
-	cat <<-EOF > /etc/apt/sources.list
-	deb http://ftp.fr.debian.org/debian/ 		$dist 			main contrib non-free
-	deb-src http://ftp.fr.debian.org/debian/	$dist 			main contrib non-free
-
-	deb http://ftp.fr.debian.org/debian/ 		jessie-backports 	main contrib non-free
-	deb-src http://ftp.fr.debian.org/debian/	jessie-backports 	main contrib non-free
-	
-	deb http://ftp.fr.debian.org/debian/ 		$dist-updates 	main contrib non-free
-	deb-src http://ftp.fr.debian.org/debian/	$dist-updates 	main contrib non-free
-	
-	deb http://security.debian.org/ 			$dist/updates 	main contrib non-free
-	deb-src http://security.debian.org/ 		$dist/updates 	main contrib non-free
-	
-	# tlp: Advanced Linux Power Management
-	# http://linrunner.de/en/tlp/docs/tlp-linux-advanced-power-management.html
-	deb http://repo.linrunner.de/debian 		sid 			main
-	EOF
-
-
-	# add the tlp apt-repo gpg key
-	apt-key adv --keyserver pool.sks-keyservers.net --recv-keys CD4E8809
-
-	# turn off translations, speed up apt-get update
-	mkdir -p /etc/apt/apt.conf.d
-	echo 'Acquire::Languages "none";' > /etc/apt/apt.conf.d/99translations
 }
 
-# installs base packages
-base() {
+# installs packages for a laptop
+packages_laptop() {
 	apt-get update
 	apt-get -y upgrade
 
 	apt-get install -y \
 		automake \
-		bridge-utils \
-		bzip2 \
 		ca-certificates \
 		cgroupfs-mount \
 		cmake \
-		coreutils \
 		curl \
 		dnsutils \
-		file \
-		findutils \
-		git \
-		gnupg \
-		gnupg-agent \
-		gnupg-curl \
-		grep \
-		gzip \
-		hostname \
-		less \
-		libc6-dev \
-		libltdl-dev \
 		libnotify-bin \
-		locales \
-		lsof \
-		make \
-		mount \
-		net-tools \
-		nfs-common \
 		network-manager \
-		p7zip \
 		rxvt-unicode-256color \
 		scdaemon \
-		ssh \
 		sudo \
-		tar \
-		tree \
-		tzdata \
-		unzip \
-		vcsh \
 		xclip \
 		xcompmgr \
 		xz-utils \
-		zip \
-		zsh \
 		--no-install-recommends
 
 	# install tlp with recommends
 	apt-get install -y tlp tlp-rdw
-
-	configure_zsh_for_root
-}
-
-configure_zsh_for_root() {
-	git clone https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
-	cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
-
-}
-
-install_network_driver() {
-
-	apt-get install -y firmware-iwlwifi firmware-realtek --no-install-recommends
-	modprobe -r iwlwifi ; modprobe iwlwifi
-
-}
-
-install_graphics() {
-	
-	local pkgs="xorg xserver-xorg xserver-xorg-video-intel"
-	apt-get install -y $pkgs --no-install-recommends
-
-}
-
-install_wm() {
-	local pkgs="feh i3 i3lock i3status slim"
-
-	apt-get install -y $pkgs --no-install-recommends
-
-	# add xorg conf
-	curl -sSL https://raw.githubusercontent.com/jfrazelle/dotfiles/master/etc/X11/xorg.conf > /etc/X11/xorg.conf
-
-	# pretty fonts
-	curl -sSL https://raw.githubusercontent.com/jfrazelle/dotfiles/master/etc/fonts/local.conf > /etc/fonts/local.conf
-
-	echo "Fonts file setup successfully now run:"
-	echo "	dpkg-reconfigure fontconfig-config"
-	echo "with settings: "
-	echo "	Autohinter, Automatic, No."
-	echo "Run: "
-	echo "	dpkg-reconfigure fontconfig"
-}
-
-install_sound() {
-	local pkgs="alsa-base alsa-utils alsa-tools libasound2"
-
-	apt-get install -y $pkgs --no-install-recommends
-
-	alsactl init
-}
-
-clean() {
-
-	sudo apt-get autoremove
-	sudo apt-get autoclean
-
-}
-
-usage() {
-	echo -e "install.sh\n\tThis script installs my basic setup for a debian laptop\n"
-	echo "Usage:"
-	echo "  sources {jessie strech}     - setup sources following given distribution & install base pkgs"
-	echo "  network                     - install network drivers"
-	echo "  graphics                    - install graphics drivers"
-	echo "  wm                    		- install window manager / configure desktop"
-	echo "  sound                  		- install / configure sound"
-	echo "  main_user              		- configure main user"
 }
 
 setup_sudo() {
@@ -189,10 +59,17 @@ setup_sudo() {
 	} >> /etc/sudoers
 }
 
-get_dotfiles() {
+configure_main_user() {
 	# create subshell
 	(
 	cd "/home/$USERNAME"
+
+	#
+	gpasswd -a $USERNAME downloads
+	gpasswd -a $USERNAME multimedia
+	gpasswd -a $USERNAME ebooks
+	gpasswd -a $USERNAME photos
+	gpasswd -a $USERNAME docker
 
 	# install oh-my-zsh
 	git clone https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
@@ -225,6 +102,73 @@ get_dotfiles() {
 	)
 }
 
+configure_motd() {
+	sudo chmod +x /etc/update-motd.d/*
+	sudo rm /etc/motd
+	sudo ln -s /var/run/motd /etc/motd
+}
+
+install_network_driver() {
+
+	apt-get install -y firmware-iwlwifi firmware-realtek --no-install-recommends
+	modprobe -r iwlwifi ; modprobe iwlwifi
+
+}
+
+install_graphics() {
+	
+	local pkgs="xorg xserver-xorg xserver-xorg-video-intel"
+	apt-get install -y $pkgs --no-install-recommends
+
+}
+
+intsall_audio() {
+	local pkgs="alsa-base alsa-utils alsa-tools libasound2"
+
+	apt-get install -y $pkgs --no-install-recommends
+
+	alsactl init
+}
+
+install_wm() {
+	local pkgs="feh i3 i3lock i3status slim"
+
+	apt-get install -y $pkgs --no-install-recommends
+
+	# add xorg conf
+	curl -sSL https://raw.githubusercontent.com/jgiovaresco/dotfiles/laptop/etc/X11/xorg.conf > /etc/X11/xorg.conf
+
+	# pretty fonts
+	curl -sSL https://raw.githubusercontent.com/jgiovaresco/dotfiles/laptop/etc/fonts/local.conf > /etc/fonts/local.conf
+
+	echo "Fonts file setup successfully now run:"
+	echo "	dpkg-reconfigure fontconfig-config"
+	echo "with settings: "
+	echo "	Autohinter, Automatic, No."
+	echo "Run: "
+	echo "	dpkg-reconfigure fontconfig"
+}
+
+clean() {
+
+	sudo apt-get autoremove
+	sudo apt-get autoclean
+
+}
+
+usage() {
+	echo -e "install.sh\n\tThis script installs my basic setup for a debian laptop\n"
+	echo "Usage:"
+	echo "  all {jessie strech}     	- complete setup"
+	echo "  install-packages            - install laptop base pkgs"
+	echo "  network                     - install network drivers"
+	echo "  graphics                    - install graphics drivers"
+	echo "  wm                    		- install window manager / configure desktop"
+	echo "  audio                  		- install / configure sound"
+	echo "  main-user              		- configure main user"
+	echo "  motd                		- configure main user"
+}
+
 main() {
 	local cmd=$1
 
@@ -233,10 +177,32 @@ main() {
 		exit 1
 	fi
 
-	if [[ $cmd == "sources" ]]; then
+	if [[ $cmd == "all" ]]; then
 		check_is_sudo
-		setup_sources "$2"
-		base
+		echo "----> Base setup"
+		base_setup
+		echo "----> Install laptop packages"
+		packages_laptop
+		echo "----> Setup sudo"
+		setup_sudo
+		echo "----> Configure main user"
+		configure_main_user
+		echo "----> Configure motd"
+		configure_motd
+		echo "----> Configure network"
+		install_network_driver
+		echo "----> Configure graphics"
+		install_graphics
+		echo "----> Configure audio"
+		intsall_audio
+		echo "----> Configure WM"
+		install_wm
+		echo "----> End of setup"
+		print_manual_steps
+		clean
+	elif [[ $cmd == "install-packages" ]]; then
+		check_is_sudo
+		packages_laptop
 		setup_sudo
 		clean
 	elif [[ $cmd == "network" ]]; then
@@ -251,12 +217,12 @@ main() {
 		check_is_sudo
 		install_wm
 		clean
-	elif [[ $cmd == "sound" ]]; then
+	elif [[ $cmd == "audio" ]]; then
 		check_is_sudo
-		install_sound
+		intsall_audio
 		clean
-	elif [[ $cmd == "main_user" ]]; then
-		get_dotfiles
+	elif [[ $cmd == "main-user" ]]; then
+		configure_main_user
 		clean
 	else
 		usage

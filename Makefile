@@ -12,7 +12,7 @@ dotfiles:
 	done
 
 etc:
-	for file in $(shell find $(CURDIR)/etc -type f -not -name ".*.swp"); do \
+	for file in $(shell find $(CURDIR)/etc -type f -not -name ".*.swp" -not -name "*update-motd.d*"); do \
 		f=$$(echo $$file | sed -e 's|$(CURDIR)||'); \
 		sudo cp $$file $$f; \
 	done
