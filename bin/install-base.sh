@@ -19,7 +19,6 @@ setup_sources() {
 		exit 1
 	fi
 
-
 	apt-get install -y apt-transport-https
 
 	cat <<-EOF > /etc/apt/sources.list
@@ -110,14 +109,53 @@ configure_zsh_for_root() {
 
 }
 
+configure_motd() {
+	mkdir -p /etc/update-motd.d
+
+	curl -sSL https://raw.githubusercontent.com/jgiovaresco/dotfiles/master/etc/update-motd.d/00-header  > /etc/update-motd.d/00-header
+	curl -sSL https://raw.githubusercontent.com/jgiovaresco/dotfiles/master/etc/update-motd.d/10-sysinfo > /etc/update-motd.d/10-sysinfo
+	curl -sSL https://raw.githubusercontent.com/jgiovaresco/dotfiles/master/etc/update-motd.d/90-footer  > /etc/update-motd.d/90-footer
+
+	chmod +x /etc/update-motd.d/*
+	rm /etc/motd
+	ln -s /var/run/motd /etc/motd
+}
+
 install_base_application() {
 
 	# Install progress (https://github.com/Xfennec/progress.git)
 	git clone https://github.com/Xfennec/progress.git /tmp/progress
 	cd /tmp/progress
 	make && make install
+
+	# Docker
 }
 
+# installs docker master
+# and adds necessary items to boot params
+install_docker() {
+	# create docker group
+	groupadd --force --gid 132 docker
+
+	curl -sSL https://get.docker.com/builds/Linux/x86_64/docker-latest > /usr/bin/docker
+	chmod +x /usr/bin/docker
+
+	# systemd-docker
+	curl -sSL https://github.com/ibuildthecloud/systemd-docker/releases/download/v0.2.1/systemd-docker > /usr/bin/systemd-docker
+	chmod +x /usr/bin/systemd-docker
+
+	curl -sSL https://raw.githubusercontent.com/jgiovaresco/dotfiles/master/etc/systemd/system/docker.service  > /etc/systemd/system/docker.service
+	curl -sSL https://raw.githubusercontent.com/jgiovaresco/dotfiles/master/etc/systemd/system/docker.socket   > /etc/systemd/system/docker.socket
+	curl -sSL https://raw.githubusercontent.com/jgiovaresco/dotfiles/master/etc/systemd/system/dnsdock.service > /etc/systemd/system/dnsdock.service
+
+	systemctl daemon-reload
+	systemctl enable docker
+
+	# update grub with docker configs and power-saving items
+	sed -i.bak 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1"/g' /etc/default/grub
+	echo "Docker has been installed. If you want memory management & swap"
+	echo "run update-grub & reboot"
+}
 
 usage() {
 	echo -e "install-base.sh\n\tThis script installs my basic setup for my computers\n"
