@@ -65,40 +65,39 @@ configure_main_user() {
 	cd "/home/$USERNAME"
 
 	#
-	gpasswd -a $USERNAME downloads
-	gpasswd -a $USERNAME multimedia
-	gpasswd -a $USERNAME ebooks
-	gpasswd -a $USERNAME photos
-	gpasswd -a $USERNAME docker
+	sudo gpasswd -a $USERNAME downloads
+	sudo gpasswd -a $USERNAME multimedia
+	sudo gpasswd -a $USERNAME ebooks
+	sudo gpasswd -a $USERNAME photos
+	sudo gpasswd -a $USERNAME docker
 
 	# fetch oh-my-zsh
-	git clone https://github.com/robbyrussell/oh-my-zsh.git .oh-my-zsh
+	su -c "git clone https://github.com/robbyrussell/oh-my-zsh.git .oh-my-zsh" -m - $USERNAME
 	chsh $USERNAME -s /bin/zsh
 
 	# fetch dotfiles from repo
-	git clone -b server https://github.com/jgiovaresco/dotfiles.git dotfiles
+	su -c "git clone -b laptop https://github.com/jgiovaresco/dotfiles.git dotfiles" -m - $USERNAME
 	
-	cd "/home/$USERNAME/dotfiles"
-	# installs all the things
-	make
+	# installs dotfiles
+	su -c "HOME=/home/$USERNAME && cd ~/dotfiles && make" -m - $USERNAME
+
+	# installs etc files
+	cd "/home/$USERNAME/dotfiles" && make etc
 
 	# enable dbus for the user session
-	systemctl --user enable dbus.socket
-
+	su -c "systemctl --user enable dbus.socket" -m - $USERNAME
+	
 	sudo systemctl enable i3lock
 	sudo systemctl enable suspend-sedation.service
 
 	cd "/home/$USERNAME"
 
 	# install .vim files
-	git clone https://github.com/jgiovaresco/.vim.git "/home/$USERNAME/.vim"
-	git clone https://github.com/gmarik/vundle.git "/home/$USERNAME/.vim/bundle/vundle"
-	ln -s "/home/$USERNAME/.vim/.vimrc" "/home/$USERNAME/.vimrc"
-	sudo ln -s "/home/$USERNAME/.vim" /root/.vim
-	sudo ln -s "/home/$USERNAME/.vimrc" /root/.vimrc
-
-	echo "To install VIM plugins (ignore potential error messages at the first start)"
-	echo "run vim +BundleInstall +qall"
+	su -c "git clone https://github.com/jgiovaresco/.vim.git .vim" -m - $USERNAME
+	su -c "git clone https://github.com/gmarik/vundle.git .vim/bundle/vundle" -m - $USERNAME
+	su -c "ln -s /home/$USERNAME/.vim/.vimrc /home/$USERNAME/.vimrc" -m - $USERNAME
+	ln -s "/home/$USERNAME/.vim" /root/.vim
+	ln -s "/home/$USERNAME/.vimrc" /root/.vimrc
 	)
 }
 
@@ -154,6 +153,14 @@ clean() {
 	sudo apt-get autoremove
 	sudo apt-get autoclean
 
+}
+
+
+print_manual_steps() {
+	echo "To complete setup, run following commands :"
+	echo " su -c "systemctl --user daemon-reload" - $USERNAME"
+	echo " systemctl daemon-reload"
+	echo " su -c "vim +BundleInstall +qall" - $USERNAME"
 }
 
 usage() {
