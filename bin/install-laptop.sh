@@ -71,14 +71,13 @@ configure_main_user() {
 	gpasswd -a $USERNAME photos
 	gpasswd -a $USERNAME docker
 
-	# install oh-my-zsh
-	git clone https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
-	sudo chsh $USERNAME -s /bin/zsh
+	# fetch oh-my-zsh
+	git clone https://github.com/robbyrussell/oh-my-zsh.git .oh-my-zsh
+	chsh $USERNAME -s /bin/zsh
 
-	# install dotfiles from repo
-	git clone https://github.com/jgiovaresco/dotfiles.git "/home/$USERNAME/dotfiles"
-	cd "/home/$USERNAME/dotfiles"
-
+	# fetch dotfiles from repo
+	git clone -b server https://github.com/jgiovaresco/dotfiles.git dotfiles
+	
 	# installs all the things
 	make
 
