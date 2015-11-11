@@ -12,33 +12,41 @@ check_is_sudo() {
 
 # sets up apt sources
 setup_sources() {
-	local dist=$1
-
-	if [[ -z "$dist" ]]; then
-		echo "You need to specify a distribution"
-		exit 1
-	fi
-
 	apt-get install -y apt-transport-https
 
 	cat <<-EOF > /etc/apt/sources.list
-	deb http://ftp.fr.debian.org/debian/ 		$dist 			main contrib non-free
-	deb-src http://ftp.fr.debian.org/debian/	$dist 			main contrib non-free
+	deb http://ftp.fr.debian.org/debian/ 		jessie 				main contrib non-free
+	deb-src http://ftp.fr.debian.org/debian/	jessie 				main contrib non-free
 
 	deb http://ftp.fr.debian.org/debian/ 		jessie-backports 	main contrib non-free
 	deb-src http://ftp.fr.debian.org/debian/	jessie-backports 	main contrib non-free
 	
-	deb http://ftp.fr.debian.org/debian/ 		$dist-updates 	main contrib non-free
-	deb-src http://ftp.fr.debian.org/debian/	$dist-updates 	main contrib non-free
+	deb http://ftp.fr.debian.org/debian/ 		jessie-updates 		main contrib non-free
+	deb-src http://ftp.fr.debian.org/debian/	jessie-updates 		main contrib non-free
 	
-	deb http://security.debian.org/ 			$dist/updates 	main contrib non-free
-	deb-src http://security.debian.org/ 		$dist/updates 	main contrib non-free
+	deb http://security.debian.org/ 			jessie/updates 		main contrib non-free
+	deb-src http://security.debian.org/ 		jessie/updates 		main contrib non-free
+	
+	deb http://ftp.fr.debian.org/debian/ 		stretch				main contrib non-free
+	deb-src http://ftp.fr.debian.org/debian/	stretch				main contrib non-free
+
+	deb http://security.debian.org/ 			stretch/updates 	main contrib non-free
+	deb-src http://security.debian.org/ 		stretch/updates 	main contrib non-free
 	
 	# tlp: Advanced Linux Power Management
 	# http://linrunner.de/en/tlp/docs/tlp-linux-advanced-power-management.html
 	deb http://repo.linrunner.de/debian 		sid 			main
 	EOF
 
+	cat <<-EOF > /etc/apt/preferences.d/00source
+	Package: *
+	Pin: release a=stable
+	Pin-Priority: 900
+
+	Package: *
+	Pin: release o=Debian
+	Pin-Priority: -10
+	EOF
 
 	# add the tlp apt-repo gpg key
 	apt-key adv --keyserver pool.sks-keyservers.net --recv-keys CD4E8809
@@ -166,8 +174,8 @@ install_docker() {
 usage() {
 	echo -e "install-base.sh\n\tThis script installs my basic setup for my computers\n"
 	echo "Usage:"
-	echo "  base {jessie strech}     	- base installation"
-	echo "  sources {jessie strech}     - setup sources following given distribution & install base pkgs"
+	echo "  base 						- base installation"
+	echo "  sources 					- setup sources following given distribution & install base pkgs"
 	echo "  base-package                - install base packages"
 	echo "  zsh-root                    - install ZSH for root"
 	echo "  appli 	                   	- install base applications"
@@ -184,7 +192,7 @@ main() {
 	if [[ $cmd == "base" ]]; then
 		check_is_sudo
 		echo "----> Setup sources"
-		setup_sources "$2"
+		setup_sources
 		echo "----> Install base packages"
 		base
 		echo "----> Configure ZSH for root"
@@ -194,7 +202,7 @@ main() {
 		echo "----> Install base application"
 		install_base_application
 	elif [[ $cmd == "sources" ]]; then
-		setup_sources "$2"
+		setup_sources
 	elif [[ $cmd == "base-package" ]]; then
 		base
 	elif [[ $cmd == "zsh-root" ]]; then

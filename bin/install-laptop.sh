@@ -13,7 +13,7 @@ check_is_sudo() {
 
 base_setup() {
 
-	/bin/bash -c "$(wget https://raw.githubusercontent.com/jgiovaresco/dotfiles/laptop/bin/install-base.sh --no-cache -O -) base stretch"
+	/bin/bash -c "$(wget https://raw.githubusercontent.com/jgiovaresco/dotfiles/laptop/bin/install-base.sh --no-cache -O -) base"
 
 }
 
@@ -118,9 +118,12 @@ intsall_audio() {
 }
 
 install_wm() {
-	local pkgs="feh i3 i3lock i3status slim"
 
-	apt-get install -y $pkgs --no-install-recommends
+	local pkgs-stable="slim"
+	local pkgs-testing="i3 i3lock i3status"
+
+	apt-get install -y $pkgs-stable --no-install-recommends
+	apt-get install -y -t testing $pkgs-testing --no-install-recommends
 
 	# add xorg conf
 	curl -sSL https://raw.githubusercontent.com/jgiovaresco/dotfiles/laptop/etc/X11/xorg.conf > /etc/X11/xorg.conf
@@ -150,6 +153,11 @@ print_manual_steps() {
 
 end_installation() {
 
+	echo "'dpkg-reconfigure fontconfig-config' is going to start, please choose following settings "
+	echo "	  Autohinter, Automatic, No."
+	read -s -n1 -p "Appuyez sur une touche pour continuer..."; echo
+	sudo dpkg-reconfigure fontconfig
+
 	systemctl --user daemon-reload
 	sudo systemctl daemon-reload
 
@@ -160,13 +168,12 @@ end_installation() {
 	sudo systemctl enable suspend-sedation.service
 
 	vim +BundleInstall +qall
-	
 }
 
 usage() {
 	echo -e "install.sh\n\tThis script installs my basic setup for a debian laptop\n"
 	echo "Usage:"
-	echo "  all {jessie strech}     	- complete setup"
+	echo "  all 						- complete setup"
 	echo "  install-packages            - install laptop base pkgs"
 	echo "  network                     - install network drivers"
 	echo "  graphics                    - install graphics drivers"
