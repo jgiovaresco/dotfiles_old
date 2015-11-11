@@ -132,7 +132,7 @@ intsall_audio() {
 
 install_wm() {
 
-	local pkgs_stable="slim"
+	local pkgs_stable="slim scrot graphicsmagick-imagemagick-compat"
 	local pkgs_testing="i3 i3lock i3status"
 
 	apt-get install -y $pkgs_stable --no-install-recommends
@@ -181,7 +181,6 @@ install_applications() {
 
 	# firefox
 	wget -O /tmp/firefox.tar.bz2 https://ftp.mozilla.org/pub/firefox/releases/latest/linux-x86_64/en-US/firefox-42.0.tar.bz2 
-	sudo tar xvfj /tmp/firefox.tar.bz2 -C /opt/firefox
 
 }
 
