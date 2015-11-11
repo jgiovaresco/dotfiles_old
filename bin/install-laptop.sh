@@ -92,6 +92,21 @@ configure_main_user() {
 	su -c "ln -s /home/$USERNAME/.vim/.vimrc /home/$USERNAME/.vimrc" -m - $USERNAME
 	ln -s "/home/$USERNAME/.vim" /root/.vim
 	ln -s "/home/$USERNAME/.vimrc" /root/.vimrc
+
+	# Bind directories
+	mkdir -p /var/documents/Documents
+	mkdir -p /var/documents/Ebooks
+	mkdir -p /var/documents/Music
+	mkdir -p /var/documents/Pictures
+	mkdir -p /var/documents/Videos
+	mkdir -p /var/.cache/julien
+
+	ln -s /var/documents/Documents /home/$USERNAME/Documents
+	ln -s /var/documents/Ebooks /home/$USERNAME/Ebooks
+	ln -s /var/documents/Music /home/$USERNAME/Music
+	ln -s /var/documents/Pictures /home/$USERNAME/Pictures
+	ln -s /var/documents/Videos /home/$USERNAME/Videos
+	ln -s /var/downloads /home/$USERNAME/Downloads
 	)
 }
 
@@ -119,24 +134,17 @@ intsall_audio() {
 
 install_wm() {
 
-	local pkgs-stable="slim"
-	local pkgs-testing="i3 i3lock i3status"
+	local pkgs_stable="slim"
+	local pkgs_testing="i3 i3lock i3status"
 
-	apt-get install -y $pkgs-stable --no-install-recommends
-	apt-get install -y -t testing $pkgs-testing --no-install-recommends
+	apt-get install -y $pkgs_stable --no-install-recommends
+	apt-get install -y -t testing $pkgs_testing --no-install-recommends
 
 	# add xorg conf
 	curl -sSL https://raw.githubusercontent.com/jgiovaresco/dotfiles/laptop/etc/X11/xorg.conf > /etc/X11/xorg.conf
 
 	# pretty fonts
 	curl -sSL https://raw.githubusercontent.com/jgiovaresco/dotfiles/laptop/etc/fonts/local.conf > /etc/fonts/local.conf
-
-	echo "Fonts file setup successfully now run:"
-	echo "	dpkg-reconfigure fontconfig-config"
-	echo "with settings: "
-	echo "	Autohinter, Automatic, No."
-	echo "Run: "
-	echo "	dpkg-reconfigure fontconfig"
 }
 
 clean() {
@@ -148,18 +156,13 @@ clean() {
 
 print_manual_steps() {
 	echo "To complete setup, run following commands as $USERNAME :"
-	echo " ./install-laptop.sh end"
+	echo "1. sudo dpkg-reconfigure fontconfig-config with settings: "
+	echo "	Autohinter, Automatic, No."
+	echo "2. ./install-laptop.sh end"
+	echo "3. "
 }
 
 end_installation() {
-
-	echo "'dpkg-reconfigure fontconfig-config' is going to start, please choose following settings "
-	echo "	  Autohinter, Automatic, No."
-	read -s -n1 -p "Appuyez sur une touche pour continuer..."; echo
-	sudo dpkg-reconfigure fontconfig
-
-	systemctl --user daemon-reload
-	sudo systemctl daemon-reload
 
 	# enable dbus for the user session
 	systemctl --user enable dbus.socket
@@ -167,7 +170,12 @@ end_installation() {
 	sudo systemctl enable i3lock
 	sudo systemctl enable suspend-sedation.service
 
+	sudo systemctl daemon-reload
+	systemctl --user daemon-reload
+
 	vim +BundleInstall +qall
+
+	sudo update-grub
 }
 
 usage() {

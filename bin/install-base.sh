@@ -35,7 +35,7 @@ setup_sources() {
 	
 	# tlp: Advanced Linux Power Management
 	# http://linrunner.de/en/tlp/docs/tlp-linux-advanced-power-management.html
-	deb http://repo.linrunner.de/debian 		sid 			main
+	deb http://repo.linrunner.de/debian 		jessie 			main
 	EOF
 
 	cat <<-EOF > /etc/apt/preferences.d/00source
@@ -162,8 +162,9 @@ install_docker() {
 	curl -sSL https://raw.githubusercontent.com/jgiovaresco/dotfiles/master/etc/systemd/system/docker.socket   > /etc/systemd/system/docker.socket
 	curl -sSL https://raw.githubusercontent.com/jgiovaresco/dotfiles/master/etc/systemd/system/dnsdock.service > /etc/systemd/system/dnsdock.service
 
-	systemctl daemon-reload
 	systemctl enable docker
+	systemctl enable dnsdock
+	systemctl daemon-reload
 
 	# update grub with docker configs and power-saving items
 	sed -i.bak 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1"/g' /etc/default/grub
