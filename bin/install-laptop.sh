@@ -128,8 +128,6 @@ intsall_audio() {
 	local pkgs="alsa-base alsa-utils alsa-tools libasound2"
 
 	apt-get install -y $pkgs --no-install-recommends
-
-	alsactl init
 }
 
 install_wm() {
@@ -158,8 +156,8 @@ print_manual_steps() {
 	echo "To complete setup, run following commands as $USERNAME :"
 	echo "1. sudo dpkg-reconfigure fontconfig-config with settings: "
 	echo "	Autohinter, Automatic, No."
-	echo "2. ./install-laptop.sh end"
-	echo "3. "
+	echo "2. sudo alsactl init"
+	echo "3. ./install-laptop.sh end"
 }
 
 end_installation() {
@@ -176,6 +174,15 @@ end_installation() {
 	vim +BundleInstall +qall
 
 	sudo update-grub
+}
+
+
+install_applications() {
+
+	# firefox
+	wget -O /tmp/firefox.tar.bz2 https://ftp.mozilla.org/pub/firefox/releases/latest/linux-x86_64/en-US/firefox-42.0.tar.bz2 
+	sudo tar xvfj /tmp/firefox.tar.bz2 -C /opt/firefox
+
 }
 
 usage() {
@@ -247,6 +254,9 @@ main() {
 		clean
 	elif [[ $cmd == "end" ]]; then
 		end_installation
+		clean
+	elif [[ $cmd == "appli" ]]; then
+		install_applications
 		clean
 	else
 		usage
