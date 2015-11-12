@@ -29,18 +29,22 @@ packages_laptop() {
 		cmake \
 		curl \
 		dnsutils \
+		feh \
+		fonts-croscore\
+		fonts-font-awesome \
 		libnotify-bin \
-		network-manager \
 		rxvt-unicode-256color \
 		scdaemon \
 		sudo \
 		xclip \
 		xcompmgr \
 		xz-utils \
+		wicd-cli \
+		wicd-ncurses \
 		--no-install-recommends
 
 	# install tlp with recommends
-	apt-get install -y tlp tlp-rdw
+	apt-get install -y tlp
 }
 
 setup_sudo() {
@@ -132,7 +136,7 @@ intsall_audio() {
 
 install_wm() {
 
-	local pkgs_stable="slim scrot graphicsmagick-imagemagick-compat"
+	local pkgs_stable="slim scrot imagemagick"
 	local pkgs_testing="i3 i3lock i3status"
 
 	apt-get install -y $pkgs_stable --no-install-recommends
@@ -156,7 +160,7 @@ print_manual_steps() {
 	echo "To complete setup, run following commands as $USERNAME :"
 	echo "1. sudo dpkg-reconfigure fontconfig-config with settings: "
 	echo "	Autohinter, Automatic, No."
-	echo "2. sudo alsactl init"
+	echo "2. sudo update-grub && sudo reboot"
 	echo "3. ./install-laptop.sh end"
 }
 
@@ -174,14 +178,6 @@ end_installation() {
 	vim +BundleInstall +qall
 
 	sudo update-grub
-}
-
-
-install_applications() {
-
-	# firefox
-	wget -O /tmp/firefox.tar.bz2 https://ftp.mozilla.org/pub/firefox/releases/latest/linux-x86_64/en-US/firefox-42.0.tar.bz2 
-
 }
 
 usage() {
@@ -253,9 +249,6 @@ main() {
 		clean
 	elif [[ $cmd == "end" ]]; then
 		end_installation
-		clean
-	elif [[ $cmd == "appli" ]]; then
-		install_applications
 		clean
 	else
 		usage
