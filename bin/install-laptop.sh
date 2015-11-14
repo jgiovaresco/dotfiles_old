@@ -14,7 +14,36 @@ check_is_sudo() {
 base_setup() {
 
 	/bin/bash -c "$(wget https://raw.githubusercontent.com/jgiovaresco/dotfiles/laptop/bin/install-base.sh --no-cache -O -) base"
+	create_fstab
+	update_rights_on_dir
+}
 
+create_fstab() {
+	cat <<-EOF > /etc/fstab
+	/dev/sb1					/boot           ext4    defaults        0       2
+
+	/dev/mapper/HDD-swap		none            swap    sw              0       0
+
+	/dev/mapper/SSD-root		/				ext4    noatime,errors=remount-ro	0       1
+	/dev/mapper/SSD-home		/home			ext4    noatime,defaults			0       2
+	/dev/mapper/HDD-cache		/var/cache		ext4    defaults					0       2	/dev/mapper/HDD-documents 	/var/documents  ext4    defaults					0       2
+	/dev/mapper/HDD-documents	/var/documentsi	ext4    defaults					0       2
+	/dev/mapper/HDD-downloads	/var/downloads	ext4    defaults					0       2
+	/dev/mapper/HDD-docker		/var/lib/docker	ext4    defaults					0       2
+	/dev/mapper/HDD-log 		/var/log		ext4    defaults					0       2
+
+	none	/tmp		tmpfs	defaults	0	0
+	none	/var/spool	tmpfs	defaults	0	0
+	none	/var/.cache	tmpfs	defaults	0	0
+	EOF
+}
+
+update_rights_on_dir() {
+	chown root.users -R /var/downloads
+	chown root.users -R /var/documents
+	
+	chmod g+w -R /var/downloads
+	chmod g+w -R /var/documents
 }
 
 # installs packages for a laptop
@@ -103,7 +132,6 @@ configure_main_user() {
 	mkdir -p /var/documents/Music
 	mkdir -p /var/documents/Pictures
 	mkdir -p /var/documents/Videos
-	mkdir -p /var/.cache/julien
 
 	ln -s /var/documents/Documents /home/$USERNAME/Documents
 	ln -s /var/documents/Ebooks /home/$USERNAME/Ebooks
