@@ -7,29 +7,24 @@
 
     # View the current working tree status using the short format
     s = status -s
-    
     # Show verbose output about tags, branches or remotes
     tags = tag -l
     branches = branch -a
     remotes = remote -v
-
     # Shortcuts
     st = status
     co = checkout
     br = branch
     sta = stash
     cb = checkout -b
-    
-    
     # Color graph log view
     graph = log --graph --color --pretty=format:"%C(yellow)%H%C(green)%d%C(reset)%n%x20%cd%n%x20%cn%x20(%ce)%n%x20%s%n"
-
     lg = log --graph --pretty=tformat:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%an %ar)%Creset'
-    
+
 [apply]
 
     # Detect whitespace errors when applying a patch
-    whitespace = fix        
+    whitespace = fix
 
 [color]
 
@@ -42,19 +37,16 @@
 
     # Use custom `.gitignore`
     excludesfile = /home/julien/.gitignore_global
-    
     # Treat spaces before tabs and all kinds of trailing whitespace as an error
     # [default] trailing-space: looks for spaces at the end of a line
     # [default] space-before-tab: looks for spaces before tabs at the beginning of a line
     whitespace = space-before-tab,-indent-with-non-tab,trailing-space
-
     editor = vim
-    
+
 [diff]
 
     # Detect copies as well as renames
     renames = copies
-    
     mnemonicPrefix = true
     wordRegex = .
 
