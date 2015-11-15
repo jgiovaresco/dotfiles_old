@@ -127,9 +127,9 @@ chrome(){
 		-v /etc/localtime:/etc/localtime:ro \
 		-v /tmp/.X11-unix:/tmp/.X11-unix \
 		-e DISPLAY=unix$DISPLAY \
-		-e UID=$UID -e GID=$GID \
-		-v $HOME/Downloads:/root/Downloads \
-		-v $HOME/Pictures:/root/Pictures \
+		-e UID=$UID -e GID=$GID -e USER=$USER \
+		-v $HOME/Downloads:/$(whoami)/Downloads \
+		-v $HOME/Pictures:/$(whoami)/Pictures \
 		-v $HOME/.chrome:/data \
 		-v /dev/shm:/dev/shm \
 		-v /etc/hosts:/etc/hosts \
@@ -138,6 +138,10 @@ chrome(){
 		--device /dev/video0 \
 		--group-add audio \
 		--group-add video \
+		--privileged \
+		-v /etc/passwd:/etc/passwd:ro \
+		-v /etc/group:/etc/group:ro \
+		-u $(whoami):$(whoami) \
 		--name chrome \
 		jess/chrome --user-data-dir=/data --force-device-scale-factor=1 \
 		--proxy-server="$proxy" --host-resolver-rules="$map" "$args"
