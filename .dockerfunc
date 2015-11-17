@@ -257,41 +257,6 @@ mpd(){
 		--name mpd \
 		jess/mpd
 }
-mutt(){
-	# subshell so we dont overwrite variables
-	(
-	local account=$1
-	export IMAP_SERVER=""
-	export SMTP_SERVER=""
-
-	if [[ "$account" == "docker" ]]; then
-		GMAIL=$GMAIL_DOCKER
-		GMAIL_NAME=$GMAIL_DOCKER_NAME
-		GMAIL_PASS=$GMAIL_DOCKER_PASS
-		GMAIL_FROM=$GMAIL_DOCKER_FROM
-	elif [[ "$account" == "riseup" ]]; then
-		GMAIL=$MAIL_RISEUP
-		GMAIL_NAME=$MAIL_RISEUP_NAME
-		GMAIL_PASS=$MAIL_RISEUP_PASS
-		GMAIL_FROM=$MAIL_RISEUP_FROM
-		IMAP_SERVER=mail.riseup.net
-		SMTP_SERVER=$IMAP_SERVER
-	fi
-
-	docker run -it --rm \
-		-e GMAIL \
-		-e GMAIL_NAME \
-		-e GMAIL_PASS \
-		-e GMAIL_FROM \
-		-e GPG_ID \
-		-e IMAP_SERVER \
-		-e SMTP_SERVER \
-		-v $HOME/.gnupg:/home/user/.gnupg \
-		-v /etc/localtime:/etc/localtime:ro \
-		--name mutt${account} \
-		jess/mutt
-	)
-}
 ncmpc(){
 	del_stopped ncmpc
 
@@ -324,19 +289,6 @@ nes(){
 		--device /dev/snd \
 		--name nes \
 		jess/nes /games/${game}.rom
-}
-nginx(){
-	del_stopped nginx
-
-	docker run -d \
-		--restart always \
-		-v $HOME/.nginx:/etc/nginx \
-		--net host \
-		--name nginx \
-		nginx
-
-	# add domain to hosts & open nginx
-	sudo hostess add jess 127.0.0.1
 }
 nmap(){
 	docker run --rm -it \
