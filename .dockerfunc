@@ -336,20 +336,6 @@ pms(){
 		--name pms \
 		jess/pms "$@"
 }
-privoxy(){
-	del_stopped privoxy
-	relies_on torproxy
-
-	docker run -d \
-		--restart always \
-		--link torproxy:torproxy \
-		-v /etc/localtime:/etc/localtime:ro \
-		-p 8118:8118 \
-		--name privoxy \
-		jess/privoxy
-
-	sudo hostess add privoxy $(docker inspect --format "{{.NetworkSettings.Networks.bridge.IPAddress}}" privoxy)
-}
 pulseaudio(){
 	del_stopped pulseaudio
 
@@ -360,23 +346,6 @@ pulseaudio(){
 		--restart always \
 		--name pulseaudio \
 		jess/pulseaudio
-}
-rainbowstream(){
-	docker run -it --rm \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v $HOME/.rainbow_oauth:/root/.rainbow_oauth \
-		-v $HOME/.rainbow_config.json:/root/.rainbow_config.json \
-		--name rainbowstream \
-		jess/rainbowstream
-}
-registrator(){
-	del_stopped registrator
-
-	docker run -d --restart always \
-		-v /var/run/docker.sock:/tmp/docker.sock \
-		--net host \
-		--name registrator \
-		gliderlabs/registrator consul:
 }
 remmina(){
 	del_stopped remmina
@@ -391,82 +360,6 @@ remmina(){
 		--name remmina \
 		jess/remmina
 }
-ricochet(){
-	del_stopped ricochet
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-e DISPLAY=unix$DISPLAY \
-		-e GDK_SCALE \
-		-e GDK_DPI_SCALE \
-		-e QT_DEVICE_PIXEL_RATIO \
-		--device /dev/dri \
-		--name ricochet \
-		jess/ricochet
-}
-rstudio(){
-	del_stopped rstudio
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-v $HOME/fastly-logs:/root/fastly-logs \
-		-v /dev/shm:/dev/shm \
-		-e DISPLAY=unix$DISPLAY \
-		-e QT_DEVICE_PIXEL_RATIO \
-		--device /dev/dri \
-		--name rstudio \
-		jess/rstudio
-}
-s3cmdocker(){
-	del_stopped s3cmd
-
-	docker run --rm -it \
-		-e AWS_ACCESS_KEY="${DOCKER_AWS_ACCESS_KEY}" \
-		-e AWS_SECRET_KEY="${DOCKER_AWS_ACCESS_SECRET}" \
-		-v $(pwd):/root/s3cmd-workspace \
-		--name s3cmd \
-		jess/s3cmd "$@"
-}
-scudcloud(){
-	del_stopped scudcloud
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-e DISPLAY=unix$DISPLAY \
-		-v /etc/machine-id:/etc/machine-id:ro \
-		-v /var/run/dbus:/var/run/dbus \
-		-v /var/run/user/$(id -u):/var/run/user/$(id -u) \
-		-e TERM \
-		-e XAUTHORITY \
-		-e DBUS_SESSION_BUS_ADDRESS \
-		-e HOME \
-		-e QT_DEVICE_PIXEL_RATIO \
-		-v /etc/passwd:/etc/passwd:ro \
-		-v /etc/group:/etc/group:ro \
-		-u $(whoami) -w "$HOME" \
-		-v $HOME/.Xauthority:$HOME/.Xauthority \
-		-v /etc/machine-id:/etc/machine-id:ro \
-		-v $HOME/.scudcloud:/home/jessie/.config/scudcloud \
-		--device /dev/snd \
-		--name scudcloud \
-		jess/scudcloud
-
-	# exit current shell
-	exit 0
-}
-shorewall(){
-	del_stopped shorewall
-
-	docker run --rm -it \
-		--net host \
-		--cap-add NET_ADMIN \
-		--privileged \
-		--name shorewall \
-		jess/shorewall "$@"
-}
 skype(){
 	del_stopped skype
 	relies_on pulseaudio
@@ -480,42 +373,6 @@ skype(){
 		--device /dev/video0 \
 		--name skype \
 		jess/skype
-}
-slack(){
-	del_stopped slack
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-e DISPLAY=unix$DISPLAY \
-		--device /dev/snd \
-		--device /dev/dri \
-		--group-add audio \
-		-v /home/jessie/.slack:/root/.config/Slack \
-		--name slack \
-		jess/slack
-
-	exit
-}
-spotify(){
-	del_stopped spotify
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-e DISPLAY=unix$DISPLAY \
-		-e QT_DEVICE_PIXEL_RATIO \
-		--device /dev/snd \
-		--name spotify \
-		jess/spotify
-}
-ssh2john(){
-	local file=$(realpath $1)
-
-	docker run --rm -it \
-		-v ${file}:/root/$(basename ${file}) \
-		--entrypoint ssh2john \
-		jess/john $@
 }
 steam(){
 	del_stopped steam
@@ -554,85 +411,10 @@ termboy(){
 		--name termboy \
 		jess/nes /games/${game}.rom
 }
-tor(){
-	del_stopped tor
-
-	docker run -d \
-		--net host \
-		--name tor \
-		jess/tor
-
-	# set up the redirect iptables rules
-	sudo setup-tor-iptables
-
-	# validate we are running through tor
-	browser-exec "https://check.torproject.org/"
-}
-torbrowser(){
-	del_stopped torbrowser
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-e DISPLAY=unix$DISPLAY \
-		-e GDK_SCALE \
-		-e GDK_DPI_SCALE \
-		--device /dev/snd \
-		--name torbrowser \
-		jess/tor-browser
-
-	# exit current shell
-	exit 0
-}
-tormessenger(){
-	del_stopped tormessenger
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-e DISPLAY=unix$DISPLAY \
-		-e GDK_SCALE \
-		-e GDK_DPI_SCALE \
-		--device /dev/snd \
-		--name tormessenger \
-		jess/tor-messenger
-
-	# exit current shell
-	exit 0
-}
-torproxy(){
-	del_stopped torproxy
-
-	docker run -d \
-		--restart always \
-		-v /etc/localtime:/etc/localtime:ro \
-		-p 9050:9050 \
-		--name torproxy \
-		jess/tor-proxy
-
-	sudo hostess add torproxy $(docker inspect --format "{{.NetworkSettings.Networks.bridge.IPAddress}}" torproxy)
-}
 traceroute(){
 	docker run --rm -it \
 		--net host \
 		jess/traceroute "$@"
-}
-transmission(){
-	del_stopped transmission
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v $HOME/Torrents:/transmission/download \
-		-v $HOME/.transmission:/transmission/config \
-		-p 9091:9091 \
-		-p 51413:51413 \
-		-p 51413:51413/udp \
-		--name transmission \
-		jess/transmission
-
-
-	sudo hostess add transmission $(docker inspect --format "{{.NetworkSettings.Networks.bridge.IPAddress}}" transmission)
-	browser-exec "http://transmission:9091"
 }
 vagrant(){
 	del_stopped vagrant
@@ -676,16 +458,6 @@ virtualbox(){
 		--privileged \
 		jess/virtualbox
 }
-visualstudio(){
-	del_stopped visualstudio
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix  \
-		-e DISPLAY=unix$DISPLAY \
-		--name visualstudio \
-		jess/visualstudio
-}
 vlc(){
 	del_stopped vlc
 	relies_on pulseaudio
@@ -713,34 +485,6 @@ watchman(){
 		--name watchman \
 		jess/watchman --foreground
 }
-wrk(){
-	docker run -it --rm \
-		--log-driver none \
-		--name wrk \
-		jess/wrk "$@"
-}
-ykpersonalize(){
-	del_stopped ykpersonalize
-
-	docker run --rm -it \
-		-v /etc/localtime:/etc/localtime:ro \
-		--device /dev/usb \
-		--device /dev/bus/usb \
-		--name ykpersonalize \
-		jess/ykpersonalize bash
-}
-yubico_piv_tool(){
-	del_stopped yubico-piv-tool
-
-	docker run --rm -it \
-		-v /etc/localtime:/etc/localtime:ro \
-		--device /dev/usb \
-		--device /dev/bus/usb \
-		--name yubico-piv-tool \
-		jess/yubico-piv-tool bash
-}
-alias yubico-piv-tool="yubico_piv_tool"
-
 
 ###
 ### Awesome sauce by @jpetazzo
