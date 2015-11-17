@@ -153,7 +153,6 @@ firefox(){
 	# exit current shell
 	exit 0
 }
-alias firefox=firefox
 gcalcli(){
 	docker run --rm -it \
 		-v /etc/localtime:/etc/localtime:ro \
@@ -205,28 +204,6 @@ imagemin(){
 		-v $HOME/Pictures:/root/Pictures \
 		jess/imagemin sh -c "imagemin /root/Pictures/${image} > /root/Pictures/${filename}_min.${extension}"
 }
-irssi(){
-	del_stopped irssi
-	relies_on notify_osd
-
-	docker run --rm -it \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /etc/machine-id:/etc/machine-id:ro \
-		-v /var/run/dbus:/var/run/dbus \
-		-v /var/run/user/$(id -u):/var/run/user/$(id -u) \
-		-e TERM \
-		-e XAUTHORITY \
-		-e DBUS_SESSION_BUS_ADDRESS \
-		-e HOME \
-		-v /etc/passwd:/etc/passwd:ro \
-		-v /etc/group:/etc/group:ro \
-		-u $(whoami) -w "$HOME" \
-		-v $HOME/.Xauthority:$HOME/.Xauthority \
-		-v $HOME/.irssi:$HOME/.irssi \
-		--read-only \
-		--name irssi \
-		jess/irssi
-}
 john(){
 	local file=$(realpath $1)
 
@@ -263,14 +240,6 @@ lynx(){
 	docker run --rm -it \
 		--name lynx \
 		jess/lynx "$@"
-}
-masscan(){
-	docker run -it --rm \
-		--log-driver none \
-		--net host \
-		--cap-add NET_ADMIN \
-		--name masscan \
-		jess/masscan "$@"
 }
 mpd(){
 	del_stopped mpd
