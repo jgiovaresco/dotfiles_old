@@ -244,16 +244,16 @@ lynx(){
 mpd(){
 	del_stopped mpd
 
-	# adding cap sys_admin so I can use nfs mount
-	# the container runs as a unpriviledged user mpd
 	docker run -d \
+		--log-driver=none \
 		--device /dev/snd \
-		--cap-add SYS_ADMIN \
 		-e MPD_HOST=/var/lib/mpd/socket \
 		-v /etc/localtime:/etc/localtime:ro \
-		-v /etc/exports:/etc/exports:ro \
-		-v $HOME/.mpd:/var/lib/mpd \
+		-v $HOME/Music/.mpd:/var/lib/mpd \
+		-v $HOME/Music:/var/music \
 		-v $HOME/.mpd.conf:/etc/mpd.conf \
+		-v /etc/passwd:/etc/passwd:ro \
+		-u $(whoami):audio \
 		--name mpd \
 		jess/mpd
 }
@@ -296,7 +296,7 @@ ncmpc(){
 	del_stopped ncmpc
 
 	docker run --rm -it \
-		-v $HOME/.mpd/socket:/var/run/mpd/socket \
+		-v $HOME/Music/.mpd/socket:/var/run/mpd/socket \
 		-e MPD_HOST=/var/run/mpd/socket \
 		--name ncmpc \
 		jess/ncmpc "$@"
@@ -375,23 +375,11 @@ pandoc(){
 		--name pandoc \
 		jess/pandoc ${args} ${rfile}
 }
-pivman(){
-	del_stopped pivman
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-e DISPLAY=unix$DISPLAY \
-		--device /dev/bus/usb \
-		--device /dev/usb \
-		--name pivman \
-		jess/pivman
-}
 pms(){
 	del_stopped pms
 
 	docker run --rm -it \
-		-v $HOME/.mpd/socket:/var/run/mpd/socket \
+		-v $HOME/Music/.mpd/socket:/var/run/mpd/socket \
 		-e MPD_HOST=/var/run/mpd/socket \
 		--name pms \
 		jess/pms "$@"
