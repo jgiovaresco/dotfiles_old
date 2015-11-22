@@ -24,6 +24,8 @@ export MANPAGER="less -X";
 # Make less the default pager
 export PAGER=less
 
+export DBUS_SESSION_BUS_ADDRESS=unix:path=/var/run/user/$(id -u)/bus;
+
 # hidpi for gtk apps
 export GDK_SCALE=2
 export GDK_DPI_SCALE=0.5

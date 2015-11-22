@@ -196,6 +196,8 @@ end_installation() {
 
 	# enable dbus for the user session
 	systemctl --user enable dbus.socket
+	systemctl --user enable dbus.service
+	systemctl --user start dbus
 	
 	sudo systemctl enable i3lock
 	sudo systemctl enable suspend-sedation.service

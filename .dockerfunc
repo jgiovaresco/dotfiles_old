@@ -19,7 +19,7 @@ del_stopped(){
 	fi
 }
 relies_on(){
-	local containers=$@
+	local containers="$@"
 
 	for container in $containers; do
 		local state=$(docker inspect --format "{{.State.Running}}" $container 2>/dev/null)
@@ -118,7 +118,6 @@ chrome(){
 		-v /etc/hosts:/etc/hosts \
 		--device /dev/snd \
 		--device /dev/dri \
-		--device /dev/video0 \
 		--group-add audio \
 		--group-add video \
 		--privileged \
@@ -193,6 +192,44 @@ http(){
 		--net host \
 		--log-driver none \
 		jess/httpie "$@"
+}
+bitlbee() {
+	del_stopped bitlbee
+
+	docker run -d \
+		-v /etc/localtime:/etc/localtime:ro \
+		-v /etc/localtime:/etc/localtime:ro \
+		-p 16667:6667 \
+		-v $HOME/.bitlbee:/var/lib/bitlbee \
+		-v /etc/passwd:/etc/passwd:ro \
+		-v /etc/group:/etc/group:ro \
+		-u $(whoami) -w "$HOME" \
+		--name bitlbee \
+		mbologna/docker-bitlbee
+}
+irssi(){
+	del_stopped irssi
+	relies_on bitlbee
+	relies_on notify_osd
+
+	docker run --rm -it \
+			-v /etc/localtime:/etc/localtime:ro \
+			-v /etc/machine-id:/etc/machine-id:ro \
+			-v /var/run/dbus:/var/run/dbus \
+			-v /var/run/user/$(id -u):/var/run/user/$(id -u) \
+			-e TERM \
+			-e XAUTHORITY \
+			-e DBUS_SESSION_BUS_ADDRESS \
+			-e HOME \
+			-v /etc/passwd:/etc/passwd:ro \
+			-v /etc/group:/etc/group:ro \
+			-u $(whoami) -w "$HOME" \
+			-v $HOME/.Xauthority:$HOME/.Xauthority \
+			-v $HOME/.irssi:$HOME/.irssi \
+			--link bitlbee \
+			--read-only \
+			--name irssi \
+			jgiovaresco/irssi
 }
 imagemin(){
 	local image=$1
