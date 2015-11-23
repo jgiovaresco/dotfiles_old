@@ -448,6 +448,28 @@ termboy(){
 		--name termboy \
 		jess/nes /games/${game}.rom
 }
+thunderbird(){
+	del_stopped thunderbird
+
+	docker run -d \
+		--memory 1gb \
+		--net host \
+		--cpuset-cpus 0 \
+		-v /etc/localtime:/etc/localtime:ro \
+		-v /tmp/.X11-unix:/tmp/.X11-unix \
+		-v $HOME/.thunderbird/mozilla:/root/.mozilla \
+		-v $HOME/.thunderbird/thunderbird:/root/.thunderbird \
+		-e DISPLAY=unix$DISPLAY \
+		-e GDK_SCALE \
+		-e GDK_DPI_SCALE \
+		--device /dev/snd \
+		--device /dev/dri \
+		--name thunderbird \
+		jgiovaresco/thunderbird "$@"
+
+	# exit current shell
+	exit 0
+}
 traceroute(){
 	docker run --rm -it \
 		--net host \
