@@ -40,7 +40,6 @@ for_window [class="(?i)Chrome"] border none
 
 for_window [class="Gimp"] floating enable
 for_window [class="Skype"] floating enable
-for_window [class="Thunderbird"] floating enable
 for_window [class="VirtualBox"] floating enable
 for_window [class="vlc"] floating enable
 
