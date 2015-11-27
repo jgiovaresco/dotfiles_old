@@ -132,6 +132,11 @@ URxvt.iso14755: false
 URxvt.iso14755_52: false
 
 !! get option over to work
+URxvt.keysym.Page_Up:   \033[5~
+URxvt.keysym.Page_Down: \033[6~
+URxvt.keysym.Home:      \033[7~
+URxvt.keysym.End:       \033[8~
+
 URxvt.keysym.M-Left:        [1;5D
 URxvt.keysym.M-Right:       [1;5C
 URxvt.keysym.Control-Left:  [1;5D
