@@ -186,6 +186,23 @@ htop(){
 		--name htop \
 		jess/htop
 }
+hubic_daemon(){
+	# check if hubic_daemon container is running
+	hubic_daemon_state=$(docker inspect --format "{{.State.Running}}" hubic 2>/dev/null)
+	if [[ -z $hubic_daemon_state ||  "$hubic_daemon_state" == "false" ]]; then
+		docker run -d \
+			-v /etc/localtime:/etc/localtime:ro \
+			-v /var/run/dbus:/var/run/dbus \
+			-v /var/run/user/$(id -u):/var/run/user/$(id -u) \
+			-e DBUS_SESSION_BUS_ADDRESS \
+			-e HUBIC_USERNAME \
+			-v /etc/group:/etc/group:ro \
+			-v $HOME/.hubiC:/home/user/.config/hubiC \
+			-v /var/documents:/hubiC \
+			--name hubic \
+			jgiovaresco/hubic
+	fi
+}
 http(){
 	docker run -t --rm \
 		-v /var/run/docker.sock:/var/run/docker.sock \
