@@ -133,12 +133,19 @@ configure_main_user() {
 	mkdir -p /var/documents/Pictures
 	mkdir -p /var/documents/Videos
 
+	mkdir /var/cache/gradle
+
+	chown root.users /var/cache/gradle
+
+	chmod g+w /var/cache/gradle
+
 	ln -s /var/documents/Documents /home/$USERNAME/Documents
 	ln -s /var/documents/Ebooks /home/$USERNAME/Ebooks
 	ln -s /var/documents/Music /home/$USERNAME/Music
 	ln -s /var/documents/Pictures /home/$USERNAME/Pictures
 	ln -s /var/documents/Videos /home/$USERNAME/Videos
 	ln -s /var/downloads /home/$USERNAME/Downloads
+	ln -s /var/cache/gradle /home/$USERNAME/.gradle
 	)
 }
 
@@ -210,6 +217,15 @@ end_installation() {
 	sudo update-grub
 }
 
+install_nvm(){
+	curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash
+
+	mkdir /var/cache/npm
+	chown root.users /var/cache/npm
+	chmod g+w /var/cache/npm
+	ln -s /var/cache/npm /home/$USERNAME/.npm
+}
+
 usage() {
 	echo -e "install.sh\n\tThis script installs my basic setup for a debian laptop\n"
 	echo "Usage:"
@@ -221,6 +237,7 @@ usage() {
 	echo "  audio                  		- install / configure sound"
 	echo "  main-user              		- configure main user"
 	echo "  end                			- Finish setup"
+	echo "  nvm                			- install NVM"
 }
 
 main() {
@@ -280,6 +297,8 @@ main() {
 	elif [[ $cmd == "end" ]]; then
 		end_installation
 		clean
+	elsif [[ $cmd == "nvm" ]]; then
+		install_nvm
 	else
 		usage
 	fi
