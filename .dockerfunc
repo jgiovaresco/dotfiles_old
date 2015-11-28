@@ -190,6 +190,8 @@ hubic_daemon(){
 	# check if hubic_daemon container is running
 	hubic_daemon_state=$(docker inspect --format "{{.State.Running}}" hubic 2>/dev/null)
 	if [[ -z $hubic_daemon_state ||  "$hubic_daemon_state" == "false" ]]; then
+		del_stopped hubic
+
 		docker run -d \
 			-v /etc/localtime:/etc/localtime:ro \
 			-v /var/run/dbus:/var/run/dbus \
