@@ -47,5 +47,4 @@ stty -ixon
 [ -f /home/julien/.travis/travis.sh ] && source /home/julien/.travis/travis.sh
 
 # Activate NVM
-export NVM_DIR="/home/julien/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
