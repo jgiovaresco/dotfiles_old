@@ -151,9 +151,10 @@ configure_main_user() {
 
 install_network_driver() {
 
-	apt-get install -y firmware-iwlwifi firmware-realtek --no-install-recommends
+	apt-get install -y dkms firmware-iwlwifi --no-install-recommends
 	modprobe -r iwlwifi ; modprobe iwlwifi
 
+	apt-get install -y -t stretch r8168-dkms
 }
 
 install_graphics() {
