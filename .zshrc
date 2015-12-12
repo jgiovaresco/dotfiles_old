@@ -27,7 +27,7 @@ done
 unset file
 
 # HubiC 
-#hubic_daemon
+hubic_daemon
 #HUBIC_STATE=`hubic status | grep State | sed "s/State: //g"`
 #[[ $HUBIC_STATE == "NotConnected" ]] && hubic login --password_path=./.config/hubiC/.hubicpwd $HUBIC_USERNAME /hubiC
 

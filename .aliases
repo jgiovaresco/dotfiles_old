@@ -49,3 +49,7 @@ alias zshconfig="vi ~/.zshrc"
 
 # dockerize application
 alias texmaker='docker run -it --rm=true -e USER=$USER -e USERID=$UID -v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME:/home/texmaker -e DISPLAY=unix$DISPLAY  --device /dev/dri --name texmaker jgiovaresco/texmaker'
+
+# Hubic
+HUBIC_STATE=`hubic status | grep State | sed "s/State: //g"`
+alias hubic_login='[[ $HUBIC_STATE == "NotConnected" ]] && hubic login --password_path=./.config/hubiC/.hubicpwd $HUBIC_USERNAME'
