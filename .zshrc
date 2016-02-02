@@ -1,3 +1,10 @@
+# ###
+# # Functions
+# # ###
+is_mac_os() {
+  [ -d "/Users" ]
+}
+
 # Path to your oh-my-zsh configuration.
 ZSH=$HOME/.oh-my-zsh
 
@@ -13,8 +20,32 @@ export UPDATE_ZSH_DAYS=13
 # Uncomment following line if you want red dots to be displayed while waiting for completion
 COMPLETION_WAITING_DOTS="true"
 
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-plugins=(git svn debian mvn npm vagrant docker docker-compose sudo extract gradle)
+if is_mac_os; then
+  # MacOS
+
+  bindkey -e
+  bindkey '^[[1;9C' forward-word
+  bindkey '^[[1;9D' backward-word
+
+  # Remove user@host prefix
+  export DEFAULT_USER="jgiovaresco"
+
+  # Iterm integration
+  test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+  # Autojump
+  [[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
+
+  # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
+  plugins=(git brew vagrant docker docker-compose sudo extract gradle npm rvm bundler gem rails)
+
+else
+  ## Linux
+  plugins=(git debian vagrant docker docker-compose sudo extract gradle npm rvm bundler gem rails)
+
+  # HubiC 
+  hubic_daemon
+fi
 
 source $ZSH/oh-my-zsh.sh
 
@@ -22,14 +53,15 @@ source $ZSH/oh-my-zsh.sh
 # * ~/.path can be used to extend `$PATH`.
 # * ~/.extra can be used for other settings you don’t want to commit.
 for file in ~/.{aliases,path,extra,exports,dockerfunc}; do
-	[[ -r "$file" ]] && [[ -f "$file" ]] && source "$file"
+  [[ -r "$file" ]] && [[ -f "$file" ]] && source "$file"
 done
 unset file
 
-# HubiC 
-hubic_daemon
-#HUBIC_STATE=`hubic status | grep State | sed "s/State: //g"`
-#[[ $HUBIC_STATE == "NotConnected" ]] && hubic login --password_path=./.config/hubiC/.hubicpwd $HUBIC_USERNAME /hubiC
+setopt hist_expire_dups_first # when trimming history, lose oldest duplicates first
+setopt hist_ignore_dups # Do not write events to history that are duplicates of previous events
+setopt hist_ignore_space # remove command line from history list when first character on the line is a space
+setopt hist_find_no_dups # When searching history don't display results already cycled through twice
+setopt hist_reduce_blanks # Remove extra blanks from each command line being added to history
 
 # Environment
 
@@ -41,10 +73,13 @@ stty -ixon
 [ -f /home/julien/.jenv/version ] && eval "$(jenv init -)"
 
 # Activate RVM
-[ -f /home/julien/.rvm/scripts/rvm ] && source $HOME/.rvm/scripts/rvm
+[ -f $HOME/.rvm/scripts/rvm ] && source $HOME/.rvm/scripts/rvm
 
 # added by travis gem
-[ -f /home/julien/.travis/travis.sh ] && source /home/julien/.travis/travis.sh
+[ -f $HOME/.travis/travis.sh ] && source $HOME/.travis/travis.sh
 
 # Activate NVM
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+# Direnv
+eval "$(direnv hook zsh)"

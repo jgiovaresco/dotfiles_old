@@ -1,11 +1,8 @@
-# Jenv path
-export JENV_PATH=$HOME/.jenv/bin
-
 # RVM path
 export RVM_PATH=$HOME/.rvm/bin
 
 # NVM dir
-export NVM_DIR="/home/julien/.nvm"
+export NVM_DIR=$HOME/.nvm
 
 # update path
-export PATH=/usr/local/bin:/:$PATH:$JENV_PATH:$RVM_PATH:/sbin
+export PATH=/usr/local/bin:$PATH:$RVM_PATH:/sbin

@@ -4,6 +4,7 @@
 alias dl="cd ~/Downloads"
 alias cdlog='cd /var/log'
 
+alias vi=vim
 
 # Detect which `ls` flavor is in use
 if ls --color > /dev/null 2>&1; then # GNU `ls`
@@ -51,5 +52,9 @@ alias zshconfig="vi ~/.zshrc"
 alias texmaker='docker run -it --rm=true -e USER=$USER -e USERID=$UID -v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME:/home/texmaker -e DISPLAY=unix$DISPLAY  --device /dev/dri --name texmaker jgiovaresco/texmaker'
 
 # Hubic
-HUBIC_STATE=`hubic status | grep State | sed "s/State: //g"`
-alias hubic_login='[[ $HUBIC_STATE == "NotConnected" ]] && hubic login --password_path=./.config/hubiC/.hubicpwd $HUBIC_USERNAME'
+#HUBIC_STATE=`hubic status | grep State | sed "s/State: //g"`
+#alias hubic_login='[[ $HUBIC_STATE == "NotConnected" ]] && hubic login --password_path=./.config/hubiC/.hubicpwd $HUBIC_USERNAME'
+
+alias doc="docker-compose"
+
+alias rhc='docker run --rm -it --volumes-from rhc-data ecarre/rhc'
