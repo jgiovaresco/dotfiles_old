@@ -1,5 +1,3 @@
-db/
-
 # Compiled source #
 ###################
 *.com
@@ -55,3 +53,9 @@ plugins/*
 ###########
 *.sublime-project
 *.sublime-workspace
+
+# Ignore Mac DS_Store files
+.DS_Store
+
+# Leadformance
+.envrc
