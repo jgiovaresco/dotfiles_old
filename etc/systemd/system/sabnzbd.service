@@ -1,0 +1,21 @@
+[Unit]
+Description=sabnzbd container
+Documentation=https://github.com/jgiovaresco/dockerfiles/sabnzbd
+After=docker.service
+Requires=docker.service
+
+[Service]
+# Turn off timeouts
+TimeoutStartSec=0
+# Enable automatic restart when container stops
+Restart=always
+# Start deluged container when service starts
+ExecStart=/usr/bin/systemd-docker run --rm --name %n \
+	-p 8080:8080 -v /var/downloads/newsgrp/sabnzbd-config:/config \
+	-v /var/downloads/newsgrp/downloads:/downloads \
+	jgiovaresco/sabnzbd
+Type=notify
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target

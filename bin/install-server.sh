@@ -82,7 +82,7 @@ configure_main_user() {
 
 	# fetch dotfiles from repo
 	su -c "git clone -b server https://github.com/jgiovaresco/dotfiles.git dotfiles" -m - $USERNAME
-	
+
 	# installs dotfiles
 	su -c "HOME=/home/$USERNAME && cd ~/dotfiles && make" -m - $USERNAME
 
@@ -111,8 +111,7 @@ print_manual_steps() {
 	echo " su -c "vim +BundleInstall +qall" - $USERNAME"
 }
 
-install_applications() {
-
+install_deluge() {
 	# Deluge
 	mkdir -p /var/downloads/deluge/deluged-config
 	mkdir -p /var/downloads/deluge/deluge-web-config
@@ -128,7 +127,26 @@ install_applications() {
 	# Start service (control progression with 'journalctl -f')
 	systemctl start deluged.service
 	systemctl start deluge-web.service
-	
+}
+
+install_sabnzbd() {
+	# Directories
+	mkdir -p /var/downloads/newsgrp/sabnzbd-config
+	mkdir -p /var/downloads/newsgrp/downloads/cache
+	mkdir -p /var/downloads/newsgrp/downloads/complete
+	mkdir -p /var/downloads/newsgrp/downloads/incomplete
+	mkdir -p /var/downloads/newsgrp/downloads/queue
+	chown root.downloads -R /var/downloads/newsgrp
+	chmod 775 -R /var/downloads/newsgrp
+	# Enable service
+	systemctl enable /etc/systemd/system/sabnzbd.service
+	# Start service (control progression with 'journalctl -f')
+	systemctl start sabnzbd.service
+}
+
+install_applications() {
+	install_deluge
+	install_sabnzbd
 }
 
 main() {
