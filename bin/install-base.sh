@@ -20,7 +20,7 @@ setup_sources() {
 	fi
 
 
-	apt-get install -y apt-transport-https
+	apt-get install -y apt-transport-https ca-certificates
 
 	cat <<-EOF > /etc/apt/sources.list
 	deb http://ftp.fr.debian.org/debian/ 		$dist 			main contrib non-free
@@ -38,11 +38,14 @@ setup_sources() {
 	# tlp: Advanced Linux Power Management
 	# http://linrunner.de/en/tlp/docs/tlp-linux-advanced-power-management.html
 	deb http://repo.linrunner.de/debian 		sid 			main
-	EOF
+
+	deb https://apt.dockerproject.org/repo  	debian-jessie 	main
+    EOF
 
 
 	# add the tlp apt-repo gpg key
 	apt-key adv --keyserver pool.sks-keyservers.net --recv-keys CD4E8809
+	apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 
 	# turn off translations, speed up apt-get update
 	mkdir -p /etc/apt/apt.conf.d

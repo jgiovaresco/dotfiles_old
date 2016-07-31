@@ -45,21 +45,16 @@ install_docker() {
 	groupadd --force --gid 132 docker
 	gpasswd -a $USERNAME docker
 
-	curl -sSL https://get.docker.com/builds/Linux/x86_64/docker-latest > /usr/bin/docker
-	chmod +x /usr/bin/docker
+	apt-get install docker-engine
 
 	# systemd-docker
 	curl -sSL https://github.com/ibuildthecloud/systemd-docker/releases/download/v0.2.1/systemd-docker > /usr/bin/systemd-docker
 	chmod +x /usr/bin/systemd-docker
 
-	curl -sSL https://raw.githubusercontent.com/jgiovaresco/dotfiles/master/etc/systemd/system/docker.service  > /etc/systemd/system/docker.service
-	curl -sSL https://raw.githubusercontent.com/jgiovaresco/dotfiles/master/etc/systemd/system/docker.socket   > /etc/systemd/system/docker.socket
 	curl -sSL https://raw.githubusercontent.com/jgiovaresco/dotfiles/master/etc/systemd/system/dnsdock.service > /etc/systemd/system/dnsdock.service
-
 	systemctl daemon-reload
-	systemctl enable docker
 
-	# update grub with docker configs and power-saving items
+# update grub with docker configs and power-saving items
 	sed -i.bak 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1"/g' /etc/default/grub
 	echo "Docker has been installed. If you want memory management & swap"
 	echo "run update-grub & reboot"
