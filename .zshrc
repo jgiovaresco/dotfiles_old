@@ -37,7 +37,7 @@ if is_mac_os; then
   [[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
 
   # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-  plugins=(git brew vagrant docker docker-compose sudo extract gradle npm rvm bundler gem rails)
+  plugins=(zsh-syntax-highlighting zsh-autosuggestions git brew vagrant docker docker-compose sudo extract gradle npm rvm bundler gem rails kubectl)
 
 else
   ## Linux
