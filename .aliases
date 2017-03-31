@@ -7,10 +7,10 @@ alias cdlog='cd /var/log'
 alias vi=vim
 
 # Detect which `ls` flavor is in use
-if ls --color > /dev/null 2>&1; then # GNU `ls`
-	colorflag="--color"
-else # OS X `ls`
-	colorflag="-G"
+if is_mac_os; then
+  colorflag="-G"
+else
+  colorflag="--color"
 fi
 
 # List all files colorized in long format
