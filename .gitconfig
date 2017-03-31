@@ -44,6 +44,7 @@
     whitespace = space-before-tab,-indent-with-non-tab,trailing-space
     editor = vim
     autocrlf = input
+    pager = diff-so-fancy | less --tabs=4 -RFX
 
 [diff]
 
@@ -82,5 +83,9 @@
 
     # Automatically correct and execute mistyped commands
     autocorrect = 1
+
 [url "https://github"]
-	insteadOf = git://github
+    insteadOf = git://github
+
+[rerere]
+    enabled = true
