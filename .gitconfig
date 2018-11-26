@@ -22,6 +22,10 @@
     lg = log --graph --pretty=tformat:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%an %ar)%Creset'
     fp = fetch -p
 
+    git = !exec git
+    fixup = !sh -c 'SHA=$(git rev-parse $1) \
+            && git commit --fixup $SHA \
+            && git rebase -i --autosquash $SHA~' -
 [apply]
 
     # Detect whitespace errors when applying a patch
