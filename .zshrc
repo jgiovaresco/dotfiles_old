@@ -30,9 +30,6 @@ if is_mac_os; then
   # Remove user@host prefix
   export DEFAULT_USER="jgiovaresco"
 
-  # Iterm integration
-  test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
   # Autojump
   [[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
 
@@ -56,7 +53,6 @@ source $ZSH/oh-my-zsh.sh
 # Load the shell dotfiles, and then some:
 # * ~/.path can be used to extend `$PATH`.
 # * ~/.extra can be used for other settings you don’t want to commit.
-for file in ~/.{aliases,path,extra,exports,dockerfunc}; do
 for file in ~/.{aliases,path,extra,exports,dockerfunc,goconf}; do
   [[ -r "$file" ]] && [[ -f "$file" ]] && source "$file"
 done
