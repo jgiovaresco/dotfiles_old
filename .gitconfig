@@ -53,10 +53,20 @@
 
 [diff]
 
+    mnemonicPrefix = true
     # Detect copies as well as renames
     renames = copies
     mnemonicPrefix = true
+    tool = icdiff
     wordRegex = .
+
+[difftool]
+
+    prompt = false
+
+[difftool "icdiff"]
+
+    cmd = /usr/local/bin/icdiff --line-numbers $LOCAL $REMOTE
 
 [grep]
 
@@ -68,6 +78,7 @@
 
 [merge]
 
+    conflictstyle = diff3
     # Include summaries of merged commits in newly created merge commit messages
     log = true
 
