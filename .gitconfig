@@ -96,6 +96,10 @@
 
     rebase = preserve
 
+[status]
+
+    showUntrackedFiles = all
+
 [help]
 
     # Automatically correct and execute mistyped commands
