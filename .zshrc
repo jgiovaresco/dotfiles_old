@@ -39,6 +39,10 @@ if is_mac_os; then
   # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
   plugins=(zsh-syntax-highlighting zsh-autosuggestions git brew vagrant docker docker-compose sudo extract gradle npm rvm bundler gem rails kubectl)
 
+  autoload -U compinit && compinit
+  autoload -U bashcompinit && bashcompinit
+
+  PROG=bridge source /etc/bash_completion.d/bridge
 else
   ## Linux
   plugins=(git debian vagrant docker docker-compose sudo extract gradle npm rvm bundler gem rails)
