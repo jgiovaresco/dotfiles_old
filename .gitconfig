@@ -21,15 +21,11 @@
     graph = log --graph --color --pretty=format:"%C(yellow)%H%C(green)%d%C(reset)%n%x20%cd%n%x20%cn%x20(%ce)%n%x20%s%n"
     lg = log --graph --pretty=tformat:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%an %ar)%Creset'
     fp = fetch -p
-
     git = !exec git
     fixup = !sh -c 'SHA=$(git rev-parse $1) \
             && git commit --fixup $SHA \
             && git rebase -i --autosquash $SHA~' -
 [apply]
-
-    # Detect whitespace errors when applying a patch
-    whitespace = fix
 
 [color]
 
@@ -42,10 +38,6 @@
 
     # Use custom `.gitignore`
     excludesfile = ~/.gitignore_global
-    # Treat spaces before tabs and all kinds of trailing whitespace as an error
-    # [default] trailing-space: looks for spaces at the end of a line
-    # [default] space-before-tab: looks for spaces before tabs at the beginning of a line
-    whitespace = space-before-tab,-indent-with-non-tab,trailing-space
     editor = vim
     autocrlf = input
     pager = diff-so-fancy | less --tabs=4 -RFX
@@ -56,7 +48,6 @@
     mnemonicPrefix = true
     # Detect copies as well as renames
     renames = copies
-    mnemonicPrefix = true
     tool = icdiff
     wordRegex = .
 
