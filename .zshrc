@@ -71,7 +71,7 @@ setopt hist_reduce_blanks # Remove extra blanks from each command line being add
 stty -ixon
 
 # Activate Jenv
-[ -f /home/julien/.jenv/version ] && eval "$(jenv init -)"
+[ -f $HOME/.jenv/version ] && eval "$(jenv init -)"
 
 # Activate RVM
 [ -f $HOME/.rvm/scripts/rvm ] && source $HOME/.rvm/scripts/rvm

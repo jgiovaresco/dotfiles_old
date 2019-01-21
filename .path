@@ -4,5 +4,8 @@ export RVM_PATH=$HOME/.rvm/bin
 # NVM dir
 export NVM_DIR=$HOME/.nvm
 
+# JENV path
+export JENV_PATH=$HOME/.jenv/bin
+
 # update path
-export PATH=/usr/local/bin:$PATH:$RVM_PATH:/sbin
+export PATH=/usr/local/bin:$RVM_PATH:/sbin:$JENV_PATH:$PATH
