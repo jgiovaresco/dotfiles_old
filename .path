@@ -7,5 +7,8 @@ export NVM_DIR=$HOME/.nvm
 # JENV path
 export JENV_PATH=$HOME/.jenv/bin
 
+# RUST path
+export RUST_PATH=$HOME/.cargo/bin
+
 # update path
-export PATH=/usr/local/bin:$RVM_PATH:/sbin:$JENV_PATH:$PATH
+export PATH=/usr/local/sbin:/usr/local/bin:$RVM_PATH:/sbin:$JENV_PATH:$HOME/bin:$RUST_PATH:$PATH
