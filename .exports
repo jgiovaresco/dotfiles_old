@@ -33,3 +33,6 @@ export QT_DEVICE_PIXEL_RATIO=2
 
 # GPG
 export GPG_TTY=`tty`
+
+# HELM
+export HELM_HOME=$HOME/.helm
